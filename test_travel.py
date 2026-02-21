@@ -8,7 +8,7 @@ import os  # For file operations
 import re  # For regular expressions
 from datetime import datetime  # For date handling
 import traceback  # For detailed error logging
-from flask_mail import Mail, Message
+# from flask_mail import Mail, Message
 from datetime import datetime, timedelta
 import phonenumbers
 
@@ -901,7 +901,7 @@ def convert_to_inr(usd_price):
 # Function to validate contact number
 def validate_contact(contact):
     try:
-        parsed_number = phonenumbers.parse(contact, None)
+        parsed_number = phonenumbers.parse(contact, "IN")
         if phonenumbers.is_valid_number(parsed_number):
             return phonenumbers.format_number(parsed_number, phonenumbers.PhoneNumberFormat.E164)
     except phonenumbers.phonenumberutil.NumberParseException:
@@ -914,20 +914,24 @@ def generate_flight_id():
 # Function to save passenger details to a JSON file
 def save_passenger_details(passenger_details):
     try:
-        if os.path.exists(PASSENGER_FILE):  # Check if file exists
-            with open(PASSENGER_FILE, 'r') as file:  # Open file for reading
-                data = json.load(file)  # Load existing data
-        else:
-            data = []  # Initialize empty list if file does not exist
+        data = []
 
-        data.append(passenger_details)  # Append new passenger details
+        if os.path.exists(PASSENGER_FILE):
+            with open(PASSENGER_FILE, 'r') as file:
+                content = file.read().strip()
+                if content:
+                    data = json.loads(content)
 
-        with open(PASSENGER_FILE, 'w') as file:  # Open file for writing
-            json.dump(data, file, indent=4)  # Save data to file
+        data.append(passenger_details)
 
-        print("\nPassenger details saved successfully!")  # Log success message
-    except Exception as e:  # Handle exceptions
-        print(f"Error saving details: {str(e)}")  # Log error
+        with open(PASSENGER_FILE, 'w') as file:
+            json.dump(data, file, indent=4)
+
+        print("Passenger details saved successfully!")
+
+    except Exception as e:
+        print(f"Error saving details: {e}")
+
 def generate_booking_id():
     """Generates a unique booking ID for hotel reservations."""
     return f"HB{random.randint(100000, 999999)}"

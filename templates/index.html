@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Horizon — Travel Assistant</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+</head>
+<body>
+
+  <!-- Ambient background layers -->
+  <div class="bg-scene">
+    <div class="bg-image" id="bgImage"></div>
+    <div class="bg-overlay"></div>
+    <div class="bg-noise"></div>
+  </div>
+
+  <!-- ── HEADER ── -->
+  <header class="site-header">
+    <div class="header-brand">
+      <span class="brand-mark">✦</span>
+      <span class="brand-name">HORIZON</span>
+    </div>
+    <nav class="header-nav">
+      <span class="nav-label">AI Travel Concierge</span>
+      <div class="status-dot" id="statusDot"></div>
+    </nav>
+  </header>
+
+  <!-- ── MAIN LAYOUT ── -->
+  <main class="app-shell">
+
+    <!-- LEFT PANEL -->
+    <aside class="panel panel-left" id="leftPanel">
+      <div class="panel-section" id="tripCard">
+        <div class="section-eyebrow">Current Journey</div>
+        <div class="trip-destination" id="tripDestination">Undecided</div>
+        <div class="trip-meta" id="tripMeta">
+          <div class="trip-meta-row">
+            <i class="fa-regular fa-calendar"></i>
+            <span id="tripDates">Dates TBD</span>
+          </div>
+          <div class="trip-meta-row">
+            <i class="fa-regular fa-user"></i>
+            <span id="tripGuests">—</span>
+          </div>
+        </div>
+        <div class="trip-progress">
+          <div class="progress-label">Planning progress</div>
+          <div class="progress-track"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+          <div class="progress-pct" id="progressPct">0%</div>
+        </div>
+      </div>
+
+      <div class="panel-section" id="itineraryCard" style="display:none;">
+        <div class="section-eyebrow">Your Itinerary</div>
+        <div class="itinerary-scroll" id="itineraryText"></div>
+      </div>
+
+      <div class="panel-section">
+        <div class="section-eyebrow">Travel Tips</div>
+        <ul class="tips-list">
+          <li><i class="fa-solid fa-passport"></i> Ensure passport validity ≥ 6 months</li>
+          <li><i class="fa-solid fa-shield-halved"></i> Purchase travel insurance</li>
+          <li><i class="fa-solid fa-file-lines"></i> Check visa requirements early</li>
+          <li><i class="fa-solid fa-money-bill-wave"></i> Notify your bank of travel dates</li>
+        </ul>
+      </div>
+    </aside>
+
+    <!-- CHAT PANEL -->
+    <section class="chat-panel">
+
+      <!-- Quick action chips -->
+      <div class="quick-chips" id="quickChips">
+        <button class="chip chip-flight" data-msg="I want to book a flight">
+          <i class="fa-solid fa-plane-departure"></i> Book Flight
+        </button>
+        <button class="chip chip-hotel" data-msg="I want to book a hotel">
+          <i class="fa-solid fa-building-columns"></i> Book Hotel
+        </button>
+        <button class="chip chip-fetch" data-msg="I want to fetch my flight details">
+          <i class="fa-solid fa-magnifying-glass"></i> My Booking
+        </button>
+        <button class="chip chip-cancel" data-msg="I want to cancel my flight">
+          <i class="fa-solid fa-xmark"></i> Cancel Flight
+        </button>
+        <button class="chip chip-update" data-msg="I want to update my flight">
+          <i class="fa-solid fa-pen-to-square"></i> Update Booking
+        </button>
+      </div>
+
+      <!-- Messages -->
+      <div class="messages-viewport" id="messagesViewport">
+        <!-- Welcome message injected by JS -->
+      </div>
+
+      <!-- Typing indicator -->
+      <div class="typing-row" id="typingRow" style="display:none;">
+        <div class="avatar avatar-bot"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+        <div class="typing-bubble">
+          <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+        </div>
+      </div>
+
+      <!-- Input bar -->
+      <div class="input-bar">
+        <div class="input-wrap">
+          <input
+            type="text"
+            id="userInput"
+            class="chat-input"
+            placeholder="Ask me anything about your trip…"
+            autocomplete="off"
+          />
+          <button class="send-btn" id="sendBtn" aria-label="Send">
+            <i class="fa-solid fa-arrow-up"></i>
+          </button>
+        </div>
+        <div class="input-hint">Press <kbd>Enter</kbd> to send</div>
+      </div>
+
+    </section>
+
+    <!-- RIGHT PANEL -->
+    <aside class="panel panel-right" id="rightPanel">
+
+      <div class="panel-section">
+        <div class="section-eyebrow">Quick Stats</div>
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon"><i class="fa-solid fa-plane"></i></div>
+            <div class="stat-value" id="statFlights">0</div>
+            <div class="stat-label">Flights</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon"><i class="fa-solid fa-hotel"></i></div>
+            <div class="stat-value" id="statHotels">0</div>
+            <div class="stat-label">Hotels</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel-section">
+        <div class="section-eyebrow">Destination Spotlight</div>
+        <div class="spotlight-card">
+          <div class="spotlight-img" id="spotlightImg"></div>
+          <div class="spotlight-info">
+            <div class="spotlight-city" id="spotlightCity">Explore the World</div>
+            <div class="spotlight-desc" id="spotlightDesc">Tell me where you want to go</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel-section">
+        <div class="section-eyebrow">Popular Destinations</div>
+        <div class="dest-chips">
+          <button class="dest-chip" data-city="Paris">Paris</button>
+          <button class="dest-chip" data-city="Tokyo">Tokyo</button>
+          <button class="dest-chip" data-city="Bali">Bali</button>
+          <button class="dest-chip" data-city="Dubai">Dubai</button>
+          <button class="dest-chip" data-city="Goa">Goa</button>
+          <button class="dest-chip" data-city="London">London</button>
+          <button class="dest-chip" data-city="Rome">Rome</button>
+          <button class="dest-chip" data-city="Singapore">Singapore</button>
+        </div>
+      </div>
+
+      <div class="panel-section">
+        <button class="ghost-btn" id="clearBtn">
+          <i class="fa-solid fa-rotate-left"></i> Clear conversation
+        </button>
+      </div>
+
+    </aside>
+
+  </main>
+
+  <script src="{{ url_for('static', filename='js/chat.js') }}"></script>
+</body>
+</html>

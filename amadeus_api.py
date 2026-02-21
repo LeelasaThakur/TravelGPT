@@ -6,8 +6,8 @@ class AmadeusAPI:
     def __init__(self):
         # API_KEY = '1RIJKyIv2gPHu3EAEbFcmQKKHZQftHlF'  # Replace with your actual API key
         # API_SECRET = 'SDzzWw2zSqWanTxb'  # Replace with your actual API secret            
-        self.api_key = "idxIO3euUPG0kVCe3xTRHpcDtxnbPdGU"  # Set this in your environment
-        self.api_secret = "IrhQkJ4Hffa7FUwM"  # Set this in your environment
+        self.api_key = "jb8VZHNabXGoAjKcNbnEEjMgAHa3Cb1M"  # Set this in your environment
+        self.api_secret = "wUJs0VLupGAFaBGi"  # Set this in your environment
 
         # Check if API key and secret are available, otherwise raise an error
         if not self.api_key or not self.api_secret:
@@ -15,32 +15,36 @@ class AmadeusAPI:
         
         self.token, self.token_expiry = self.get_access_token()  # Fetch token on initialization
 
-    def get_access_token(self):
-        """Fetch OAuth2 access token from Amadeus API."""
+    def get_access_token(self, retries=3):
+        """Fetch OAuth2 access token from Amadeus API with retry on network failure."""
+        import time
         auth_url = 'https://test.api.amadeus.com/v1/security/oauth2/token'
-        
-        # Form data for OAuth2 request
         data = {
             'grant_type': 'client_credentials',
             'client_id': self.api_key,
             'client_secret': self.api_secret
         }
-
-        # Send the POST request to retrieve the access token
-        response = requests.post(auth_url, data=data)
-
-        # Debugging: Print status and response content for easier troubleshooting
-        print(f"Auth Response Status Code: {response.status_code}")
-        print(f"Auth Response Content: {response.text}")
-
-        # If successful, retrieve the token
-        if response.status_code == 200:
-            token_info = response.json()
-            access_token = token_info['access_token']
-            token_expiry = token_info.get('expires_in', 900)  # Default to 15 minutes
-            return access_token, token_expiry
-        else:
-            raise Exception(f"Failed to get token: {response.status_code} - {response.text}")
+        last_error = None
+        for attempt in range(retries):
+            try:
+                response = requests.post(auth_url, data=data, timeout=15)
+                print(f"Auth Response Status Code: {response.status_code}")
+                print(f"Auth Response Content: {response.text}")
+                if response.status_code == 200:
+                    token_info = response.json()
+                    return token_info['access_token'], token_info.get('expires_in', 900)
+                else:
+                    raise Exception(f"Failed to get token: {response.status_code} - {response.text}")
+            except requests.exceptions.ConnectionError as e:
+                last_error = e
+                wait = 2 ** attempt
+                print(f"Amadeus connection error (attempt {attempt+1}/{retries}), retrying in {wait}s... {e}")
+                time.sleep(wait)
+            except requests.exceptions.Timeout as e:
+                last_error = e
+                print(f"Amadeus token request timed out (attempt {attempt+1}/{retries})")
+                time.sleep(2 ** attempt)
+        raise Exception(f"Amadeus unreachable after {retries} retries: {last_error}")
 
     def ensure_valid_token(self):
         """Check if the token is valid or expired and refresh if necessary."""
@@ -54,14 +58,14 @@ class AmadeusAPI:
         url = f"https://test.api.amadeus.com/v1/reference-data/locations?keyword={city_name}&subType=AIRPORT"
         headers = {"Authorization": f"Bearer {self.token}"}
 
-        response = requests.get(url, headers=headers)
+        response = requests.get(url, headers=headers, timeout=15)
 
         # Handle token expiration (401 Unauthorized)
         if response.status_code == 401:
             print("Token invalid or expired. Refreshing token...")
             self.token, self.token_expiry = self.get_access_token()
             headers = {"Authorization": f"Bearer {self.token}"}
-            response = requests.get(url, headers=headers)
+            response = requests.get(url, headers=headers, timeout=15)
 
         if response.status_code == 200:
             data = response.json()
@@ -86,7 +90,7 @@ class AmadeusAPI:
             'max': 5  # Limit results
         }
 
-        response = requests.get(url, headers=headers, params=params)
+        response = requests.get(url, headers=headers, params=params, timeout=15)
     
         if response.status_code == 200:
             return response.json().get('data', [])
@@ -100,7 +104,7 @@ class AmadeusAPI:
         headers = {"Authorization": f"Bearer {self.token}"}
         params = {"keyword": city_name, "subType": "CITY"}
 
-        response = requests.get(url, headers=headers, params=params)
+        response = requests.get(url, headers=headers, params=params, timeout=15)
 
         if response.status_code == 200:
             data = response.json()
@@ -120,7 +124,7 @@ class AmadeusAPI:
         headers = {"Authorization": f"Bearer {self.token}"}
         params = {"airlineCodes": carrier_code}
 
-        response = requests.get(url, headers=headers, params=params)
+        response = requests.get(url, headers=headers, params=params, timeout=15)
 
         if response.status_code == 200:
             data = response.json()
@@ -142,7 +146,7 @@ class AmadeusAPI:
             headers = {"Authorization": f"Bearer {self.token}"}
             params = {"cityCode": city_code}
 
-            response = requests.get(url, headers=headers, params=params)
+            response = requests.get(url, headers=headers, params=params, timeout=15)
             if response.status_code == 200:
                 hotels = response.json().get('data', [])
                 if not hotels:
@@ -174,7 +178,7 @@ class AmadeusAPI:
                     "checkOutDate": check_out_date,
                 }
 
-                response = requests.get(url, headers=headers, params=params)
+                response = requests.get(url, headers=headers, params=params, timeout=15)
                 if response.status_code == 200:
                     all_offers.extend(response.json().get("data", []))
                 elif response.status_code == 400:

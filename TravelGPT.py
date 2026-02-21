@@ -8,8 +8,8 @@ import os  # For file operations
 import re  # For regular expressions
 from datetime import datetime  # For date handling
 import traceback  # For detailed error logging
-from twilio.rest import Client
-from flask_mail import Mail, Message
+# from twilio.rest import Client
+# from flask_mail import Mail, Message
 from datetime import datetime, timedelta
 
 
@@ -496,8 +496,9 @@ def index():
 HOTEL_BOOKINGS_FILE = "hotel_bookings.json"
  # Define the path for passenger details file
 PASSENGER_FILE = "user_details.json"  # JSON file to store passenger details
-SAMBANOVA_BASE_URL = "https://api.sambanova.ai/v1/chat/completions"  # Base URL for SambaNova API
-SAMBANOVA_API_KEY = "7a3ea02e-28b0-43e5-8179-8df9132981eb"  # API key for SambaNova
+SAMBANOVA_API_KEY = os.getenv("SAMBANOVA_API_KEY", "939ebbeb-e6f4-402b-9b37-91e6c43dc926")
+SAMBANOVA_BASE_URL = "https://api.sambanova.ai/v1"
+MODEL_NAME = "Llama-3.3-Swallow-70B-Instruct-v0.4"
 
 # Initialize the Amadeus API
 amadeus = AmadeusAPI()  # Create an instance of AmadeusAPI
