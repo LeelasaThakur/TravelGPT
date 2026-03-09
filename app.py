@@ -14,7 +14,7 @@ import phonenumbers
 
 
 # Initialize the Flask application
-app = Flask(__name__)  # Create an instance of the Flask class
+app = Flask(__name__,template_folder='.')  # Create an instance of the Flask class
 app.secret_key = "your_secret_key"  # Required for session handling
 
 

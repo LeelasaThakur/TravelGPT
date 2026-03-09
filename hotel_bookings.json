@@ -1,0 +1,15 @@
+[
+    {
+        "booking_id": "HB859737",
+        "name": "Leelasa Thakur",
+        "contact": "+919324526992",
+        "city_name": "mumbai",
+        "check_in_date": "2026-03-09",
+        "check_out_date": "2026-03-12",
+        "adults": "2",
+        "hotel_name": "Lakeside Chalet Mumbai Marriott Executive Apartments",
+        "price": 81420.0,
+        "currency": "INR",
+        "address": "Address not available"
+    }
+]
