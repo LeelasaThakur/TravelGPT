@@ -18,7 +18,7 @@ def create_app(config_name='dev'):
     base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     app = Flask(__name__, 
                 template_folder=os.path.join(base_dir, 'templates'),
-                static_folder=os.path.join(base_dir, 'static'))
+                static_folder=os.path.join(base_dir, 'public', 'static'))
     
     app.config.from_object(config_by_name[config_name])
 
