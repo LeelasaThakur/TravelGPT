@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Horizon Travel AI</title>
+    
+    <!-- Fonts: Inter and Cormorant Garamond -->
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="/static/css/main.css">
+    <link rel="stylesheet" href="/static/css/chat.css">
+    
+    <!-- Marked.js for Markdown parsing -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h1 class="logo">Horizon</h1>
+                <p class="subtitle">AI Travel Concierge</p>
+            </div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li class="active"><i class="fa-solid fa-message"></i> New Trip</li>
+                    <li><i class="fa-solid fa-suitcase"></i> My Bookings</li>
+                    <li><i class="fa-solid fa-map-location-dot"></i> Itineraries</li>
+                </ul>
+            </nav>
+            <div class="sidebar-footer">
+                <button id="voiceToggle" class="btn voice-btn">
+                    <i class="fa-solid fa-microphone"></i> Voice Mode
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Chat Area -->
+        <main class="chat-area">
+            <div class="chat-header">
+                <h2>Plan Your Journey</h2>
+                <div class="status-indicator connected"></div>
+            </div>
+
+            <div class="chat-messages" id="chat-messages">
+                <!-- Welcome Message -->
+                <div class="message assistant-message welcome-card">
+                    <div class="welcome-content">
+                        <h3>Where to next?</h3>
+                        <p>I can help you book flights, find hotels, and plan the perfect itinerary.</p>
+                        <div class="quick-actions">
+                            <button class="quick-action-btn" data-intent="book_flight">Book a Flight</button>
+                            <button class="quick-action-btn" data-intent="book_hotel">Find a Hotel</button>
+                            <button class="quick-action-btn" data-intent="plan_itinerary">Plan Itinerary</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="chat-input-container">
+                <div class="chat-input-wrapper">
+                    <button id="voiceInputBtn" class="icon-btn" title="Speak">
+                        <i class="fa-solid fa-microphone"></i>
+                    </button>
+                    <input type="text" id="chat-input" placeholder="Ask Horizon..." autocomplete="off">
+                    <button id="send-btn" class="icon-btn send-btn" title="Send">
+                        <i class="fa-solid fa-paper-plane"></i>
+                    </button>
+                </div>
+                <div class="input-footer">
+                    <p>Horizon AI can make mistakes. Consider verifying important details.</p>
+                </div>
+            </div>
+        </main>
+        
+        <!-- Context Panel -->
+        <aside class="context-panel" id="context-panel">
+            <div class="context-header">
+                <h3>Trip Summary</h3>
+            </div>
+            <div class="context-content" id="context-content">
+                <p class="empty-state">Your trip details will appear here as we plan.</p>
+            </div>
+        </aside>
+    </div>
+
+    <!-- Scripts -->
+    <script src="/static/js/app.js"></script>
+    <script src="/static/js/chat.js"></script>
+    <script src="/static/js/voice.js"></script>
+</body>
+</html>
