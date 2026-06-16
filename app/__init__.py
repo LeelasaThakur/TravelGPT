@@ -13,10 +13,12 @@ migrate = Migrate()
 limiter = Limiter(key_func=get_remote_address, default_limits=["200 per day", "50 per hour"])
 talisman = Talisman()
 
+import os
 def create_app(config_name='dev'):
+    base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     app = Flask(__name__, 
-                template_folder='../templates',
-                static_folder='../static')
+                template_folder=os.path.join(base_dir, 'templates'),
+                static_folder=os.path.join(base_dir, 'static'))
     
     app.config.from_object(config_by_name[config_name])
 

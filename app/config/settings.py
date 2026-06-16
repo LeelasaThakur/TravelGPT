@@ -26,9 +26,15 @@ class TestingConfig(Config):
     TESTING = True
     SQLALCHEMY_DATABASE_URI = "sqlite:///:memory:"
 
+from sqlalchemy.pool import NullPool
+
 class ProductionConfig(Config):
     DEBUG = False
-    SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URL")
+    TESTING = False
+    SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL')
+    SQLALCHEMY_ENGINE_OPTIONS = {
+        'poolclass': NullPool
+    }
     # Enforce secure cookies in production
     SESSION_COOKIE_SECURE = True
     SESSION_COOKIE_HTTPONLY = True

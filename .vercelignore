@@ -1,0 +1,13 @@
+run.py
+tests/
+Dockerfile
+docker-compose.yml
+pytest.ini
+README.md
+.gitignore
+.env
+__pycache__/
+venv/
+env/
+.venv/
+.pytest_cache/
